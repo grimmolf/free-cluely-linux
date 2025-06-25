@@ -9,6 +9,12 @@ A desktop application to help you cheat on everything.
 - Git installed on your computer
 - A Gemini API key (get it from [Google AI Studio](https://makersuite.google.com/app/apikey))
 
+#### Linux Fedora Additional Requirements
+For optimal performance on Linux Fedora, ensure you have:
+- `gnome-screenshot` or `scrot` for screenshot functionality
+- X11 or Wayland display server properly configured
+- Required development tools: `sudo dnf install gcc-c++ make python3-devel`
+
 ### Installation Steps
 
 1. Clone the repository:
@@ -64,6 +70,21 @@ The built app will be in the `release` folder.
      lsof -i :5180
      # Kill them (replace [PID] with the process ID)
      kill [PID]
+     ```
+
+   **Linux Fedora specific troubleshooting**:
+   - If screenshots aren't working, install required tools:
+     ```bash
+     # For GNOME desktop
+     sudo dnf install gnome-screenshot
+     # Alternative for other desktop environments
+     sudo dnf install scrot
+     ```
+   - If the window doesn't show properly, try:
+     ```bash
+     # Set X11 permissions (if using X11)
+     xhost +local:
+     # Or ensure proper Wayland permissions
      ```
 
 3. **Keyboard Shortcuts**:

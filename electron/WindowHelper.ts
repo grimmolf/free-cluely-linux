@@ -108,11 +108,15 @@ export class WindowHelper {
       this.mainWindow.setAlwaysOnTop(true, "floating")
     }
     if (process.platform === "linux") {
-      // Linux-specific optimizations for stealth overlays
+      // Linux-specific optimizations for better compatibility
       if (this.mainWindow.setHasShadow) {
         this.mainWindow.setHasShadow(false)
       }
-      this.mainWindow.setFocusable(false)
+      // Keep focusable true for better interaction on Linux
+      this.mainWindow.setFocusable(true)
+      // Additional Linux window management
+      this.mainWindow.setAlwaysOnTop(true, "screen-saver")
+      this.mainWindow.setVisibleOnAllWorkspaces(true)
     } 
     this.mainWindow.setSkipTaskbar(true)
     this.mainWindow.setAlwaysOnTop(true)

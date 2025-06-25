@@ -79,11 +79,23 @@ export class ScreenshotHelper {
     showMainWindow: () => void
   ): Promise<string> {
     hideMainWindow()
+    
+    // Add delay for Linux to ensure window is fully hidden
+    if (process.platform === "linux") {
+      await new Promise(resolve => setTimeout(resolve, 200))
+    }
+    
     let screenshotPath = ""
 
     if (this.view === "queue") {
       screenshotPath = path.join(this.screenshotDir, `${uuidv4()}.png`)
-      await screenshot({ filename: screenshotPath })
+      
+      // Linux-specific screenshot options
+      const screenshotOptions = process.platform === "linux" 
+        ? { filename: screenshotPath, format: "png" }
+        : { filename: screenshotPath }
+      
+      await screenshot(screenshotOptions)
 
       this.screenshotQueue.push(screenshotPath)
       if (this.screenshotQueue.length > this.MAX_SCREENSHOTS) {
@@ -98,7 +110,13 @@ export class ScreenshotHelper {
       }
     } else {
       screenshotPath = path.join(this.extraScreenshotDir, `${uuidv4()}.png`)
-      await screenshot({ filename: screenshotPath })
+      
+      // Linux-specific screenshot options
+      const screenshotOptions = process.platform === "linux" 
+        ? { filename: screenshotPath, format: "png" }
+        : { filename: screenshotPath }
+      
+      await screenshot(screenshotOptions)
 
       this.extraScreenshotQueue.push(screenshotPath)
       if (this.extraScreenshotQueue.length > this.MAX_SCREENSHOTS) {
