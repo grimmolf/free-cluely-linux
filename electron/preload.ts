@@ -32,6 +32,12 @@ interface ElectronAPI {
   analyzeAudioFile: (path: string) => Promise<{ text: string; timestamp: number }>
   analyzeImageFile: (path: string) => Promise<void>
   quitApp: () => Promise<void>
+
+  // Model Provider Configuration
+  getModelProviderConfig: () => Promise<any>
+  setModelProviderConfig: (config: any) => Promise<{ success: boolean }>
+  getAvailableProviders: () => Promise<Array<{ value: string, label: string, requiresApiKey: boolean }>>
+  getModelOptions: (provider: string) => Promise<string[]>
 }
 
 export const PROCESSING_EVENTS = {
@@ -165,5 +171,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
   analyzeAudioFromBase64: (data: string, mimeType: string) => ipcRenderer.invoke("analyze-audio-base64", data, mimeType),
   analyzeAudioFile: (path: string) => ipcRenderer.invoke("analyze-audio-file", path),
   analyzeImageFile: (path: string) => ipcRenderer.invoke("analyze-image-file", path),
-  quitApp: () => ipcRenderer.invoke("quit-app")
+  quitApp: () => ipcRenderer.invoke("quit-app"),
+
+  // Model Provider Configuration
+  getModelProviderConfig: () => ipcRenderer.invoke("get-model-provider-config"),
+  setModelProviderConfig: (config: any) => ipcRenderer.invoke("set-model-provider-config", config),
+  getAvailableProviders: () => ipcRenderer.invoke("get-available-providers"),
+  getModelOptions: (provider: string) => ipcRenderer.invoke("get-model-options", provider)
 } as ElectronAPI)

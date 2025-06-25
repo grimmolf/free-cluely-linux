@@ -4,11 +4,13 @@ import { IoLogOutOutline } from "react-icons/io5"
 interface QueueCommandsProps {
   onTooltipVisibilityChange: (visible: boolean, height: number) => void
   screenshots: Array<{ path: string; preview: string }>
+  setView?: React.Dispatch<React.SetStateAction<"queue" | "solutions" | "debug" | "settings">>
 }
 
 const QueueCommands: React.FC<QueueCommandsProps> = ({
   onTooltipVisibilityChange,
-  screenshots
+  screenshots,
+  setView
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -210,6 +212,20 @@ const QueueCommands: React.FC<QueueCommandsProps> = ({
             </div>
           )}
         </div>
+
+        {/* Settings Button */}
+        {setView && (
+          <div className="flex items-center gap-2">
+            <button
+              className="bg-white/10 hover:bg-white/20 transition-colors rounded-md px-2 py-1 text-[11px] leading-none text-white/70 flex items-center gap-1"
+              onClick={() => setView("settings")}
+              type="button"
+              title="Settings"
+            >
+              ⚙️ Settings
+            </button>
+          </div>
+        )}
 
         {/* Separator */}
         <div className="mx-2 h-4 w-px bg-white/20" />

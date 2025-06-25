@@ -18,11 +18,18 @@ export class ProcessingHelper {
 
   constructor(appState: AppState) {
     this.appState = appState
-    const apiKey = process.env.GEMINI_API_KEY
-    if (!apiKey) {
-      throw new Error("GEMINI_API_KEY not found in environment variables")
+    const modelConfig = appState.configManager.getModelProviderConfig()
+    
+    // Validate configuration
+    if (modelConfig.provider !== 'ollama' && !modelConfig.apiKey) {
+      throw new Error(`API key is required for ${modelConfig.provider} provider. Please check your configuration.`)
     }
-    this.llmHelper = new LLMHelper(apiKey)
+    
+    this.llmHelper = new LLMHelper(modelConfig)
+  }
+
+  public getLLMHelper(): LLMHelper {
+    return this.llmHelper
   }
 
   public async processScreenshots(): Promise<void> {

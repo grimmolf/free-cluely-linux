@@ -2,6 +2,8 @@
 
 import { ipcMain, app } from "electron"
 import { AppState } from "./main"
+import { ModelProviderFactory } from "./ModelProviderFactory"
+import { ProcessingHelper } from "./ProcessingHelper"
 
 export function initializeIpcHandlers(appState: AppState): void {
   ipcMain.handle(
@@ -105,5 +107,45 @@ export function initializeIpcHandlers(appState: AppState): void {
 
   ipcMain.handle("quit-app", () => {
     app.quit()
+  })
+
+  // Model Provider Configuration IPC Handlers
+  ipcMain.handle("get-model-provider-config", async () => {
+    try {
+      return appState.configManager.getModelProviderConfig()
+    } catch (error: any) {
+      console.error("Error getting model provider config:", error)
+      throw error
+    }
+  })
+
+  ipcMain.handle("set-model-provider-config", async (event, config) => {
+    try {
+      appState.configManager.setModelProviderConfig(config)
+      // Reinitialize ProcessingHelper with new config
+      appState.processingHelper = new ProcessingHelper(appState)
+      return { success: true }
+    } catch (error: any) {
+      console.error("Error setting model provider config:", error)
+      throw error
+    }
+  })
+
+  ipcMain.handle("get-available-providers", async () => {
+    try {
+      return ModelProviderFactory.getAvailableProviders()
+    } catch (error: any) {
+      console.error("Error getting available providers:", error)
+      throw error
+    }
+  })
+
+  ipcMain.handle("get-model-options", async (event, provider: string) => {
+    try {
+      return ModelProviderFactory.getModelOptions(provider)
+    } catch (error: any) {
+      console.error("Error getting model options:", error)
+      throw error
+    }
   })
 }

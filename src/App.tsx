@@ -4,6 +4,7 @@ import { ToastViewport } from "@radix-ui/react-toast"
 import { useEffect, useRef, useState } from "react"
 import Solutions from "./_pages/Solutions"
 import { QueryClient, QueryClientProvider } from "react-query"
+import ModelProviderSettings from "./components/Settings/ModelProviderSettings"
 
 declare global {
   interface Window {
@@ -46,6 +47,12 @@ declare global {
       moveWindowLeft: () => Promise<void>
       moveWindowRight: () => Promise<void>
       quitApp: () => Promise<void>
+
+      // Model Provider Configuration
+      getModelProviderConfig: () => Promise<any>
+      setModelProviderConfig: (config: any) => Promise<{ success: boolean }>
+      getAvailableProviders: () => Promise<Array<{ value: string, label: string, requiresApiKey: boolean }>>
+      getModelOptions: (provider: string) => Promise<string[]>
     }
   }
 }
@@ -60,7 +67,7 @@ const queryClient = new QueryClient({
 })
 
 const App: React.FC = () => {
-  const [view, setView] = useState<"queue" | "solutions" | "debug">("queue")
+  const [view, setView] = useState<"queue" | "solutions" | "debug" | "settings">("queue")
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Effect for height monitoring
@@ -160,6 +167,19 @@ const App: React.FC = () => {
             <Queue setView={setView} />
           ) : view === "solutions" ? (
             <Solutions setView={setView} />
+          ) : view === "settings" ? (
+            <div className="p-4">
+              <div className="mb-4 flex justify-between items-center">
+                <h2 className="text-xl font-bold">Settings</h2>
+                <button 
+                  onClick={() => setView("queue")}
+                  className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+                >
+                  Back
+                </button>
+              </div>
+              <ModelProviderSettings />
+            </div>
           ) : (
             <></>
           )}
