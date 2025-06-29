@@ -1,6 +1,6 @@
 // Solutions.tsx
 import React, { useState, useEffect, useRef } from "react"
-import { useQuery, useQueryClient } from "react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism"
 
@@ -160,9 +160,9 @@ const Solutions: React.FC<SolutionsProps> = ({ setView }) => {
 
   const [isResetting, setIsResetting] = useState(false)
 
-  const { data: extraScreenshots = [], refetch } = useQuery<Array<{ path: string; preview: string }>, Error>(
-    ["extras"],
-    async () => {
+  const { data: extraScreenshots = [], refetch } = useQuery({
+    queryKey: ["extras"],
+    queryFn: async () => {
       try {
         const existing = await window.electronAPI.getScreenshots()
         return existing
@@ -171,11 +171,9 @@ const Solutions: React.FC<SolutionsProps> = ({ setView }) => {
         return []
       }
     },
-    {
-      staleTime: Infinity,
-      cacheTime: Infinity
-    }
-  )
+    staleTime: Infinity,
+    gcTime: Infinity
+  })
 
   const showToast = (
     title: string,
@@ -235,8 +233,8 @@ const Solutions: React.FC<SolutionsProps> = ({ setView }) => {
         setIsResetting(true)
 
         // Clear the queries
-        queryClient.removeQueries(["solution"])
-        queryClient.removeQueries(["new_solution"])
+        queryClient.removeQueries({queryKey: ["solution"]})
+        queryClient.removeQueries({queryKey: ["new_solution"]})
 
         // Reset other states
         refetch()

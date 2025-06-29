@@ -61,7 +61,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: Infinity,
-      cacheTime: Infinity
+      gcTime: Infinity
     }
   }
 })
@@ -74,10 +74,10 @@ const App: React.FC = () => {
   useEffect(() => {
     const cleanup = window.electronAPI.onResetView(() => {
       console.log("Received 'reset-view' message from main process.")
-      queryClient.invalidateQueries(["screenshots"])
-      queryClient.invalidateQueries(["problem_statement"])
-      queryClient.invalidateQueries(["solution"])
-      queryClient.invalidateQueries(["new_solution"])
+      queryClient.invalidateQueries({queryKey: ["screenshots"]})
+      queryClient.invalidateQueries({queryKey: ["problem_statement"]})
+      queryClient.invalidateQueries({queryKey: ["solution"]})
+      queryClient.invalidateQueries({queryKey: ["new_solution"]})
       setView("queue")
     })
 
@@ -132,9 +132,9 @@ const App: React.FC = () => {
       }),
 
       window.electronAPI.onUnauthorized(() => {
-        queryClient.removeQueries(["screenshots"])
-        queryClient.removeQueries(["solution"])
-        queryClient.removeQueries(["problem_statement"])
+        queryClient.removeQueries({queryKey: ["screenshots"]})
+        queryClient.removeQueries({queryKey: ["solution"]})
+        queryClient.removeQueries({queryKey: ["problem_statement"]})
         setView("queue")
         console.log("Unauthorized")
       }),
@@ -142,16 +142,16 @@ const App: React.FC = () => {
       window.electronAPI.onResetView(() => {
         console.log("Received 'reset-view' message from main process")
 
-        queryClient.removeQueries(["screenshots"])
-        queryClient.removeQueries(["solution"])
-        queryClient.removeQueries(["problem_statement"])
+        queryClient.removeQueries({queryKey: ["screenshots"]})
+        queryClient.removeQueries({queryKey: ["solution"]})
+        queryClient.removeQueries({queryKey: ["problem_statement"]})
         setView("queue")
         console.log("View reset to 'queue' via Command+R shortcut")
       }),
       window.electronAPI.onProblemExtracted((data: any) => {
         if (view === "queue") {
           console.log("Problem extracted successfully")
-          queryClient.invalidateQueries(["problem_statement"])
+          queryClient.invalidateQueries({queryKey: ["problem_statement"]})
           queryClient.setQueryData(["problem_statement"], data)
         }
       })
