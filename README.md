@@ -23,7 +23,7 @@ For optimal performance on Linux Fedora, ensure you have:
 1. Clone the repository:
 ```bash
 git clone [repository-url]
-cd interview-coder
+cd free-cluely-linux
 ```
 
 2. Install dependencies:
