@@ -92,7 +92,7 @@ export class ScreenshotHelper {
       
       // Linux-specific screenshot options
       const screenshotOptions = process.platform === "linux" 
-        ? { filename: screenshotPath, format: "png" }
+        ? { filename: screenshotPath, format: "png" as any }
         : { filename: screenshotPath }
       
       await screenshot(screenshotOptions)
@@ -113,7 +113,7 @@ export class ScreenshotHelper {
       
       // Linux-specific screenshot options
       const screenshotOptions = process.platform === "linux" 
-        ? { filename: screenshotPath, format: "png" }
+        ? { filename: screenshotPath, format: "png" as any }
         : { filename: screenshotPath }
       
       await screenshot(screenshotOptions)

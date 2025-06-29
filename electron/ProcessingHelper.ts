@@ -159,7 +159,4 @@ export class ProcessingHelper {
     return this.llmHelper.analyzeAudioFile(filePath);
   }
 
-  public getLLMHelper() {
-    return this.llmHelper;
-  }
 }
