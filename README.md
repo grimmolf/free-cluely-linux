@@ -64,15 +64,30 @@ npm run build
 ```
 The built app will be in the `release` folder.
 
-### ⚙️ Model Provider Configuration
+### ⚙️ Configuration
 
-Once the app is running, you can configure your AI model provider:
+Once the app is running, you can configure various settings:
+
+#### Model Provider Configuration
 
 1. **Access Settings**: Click the ⚙️ Settings button in the main interface
 2. **Choose Provider**: Select from Gemini, Red Hat Model as a Service, or Ollama
 3. **Configure Model**: Choose your preferred model (e.g., gemini-2.0-flash, llama3.1, etc.)
 4. **Add API Key**: Enter your API key if required (not needed for Ollama)
 5. **Save**: Click Save Configuration to apply changes
+
+#### Screenshot Settings (Multi-Monitor Support)
+
+For users with multiple monitors:
+
+1. **Access Settings**: Click the ⚙️ Settings button
+2. **Screenshot Settings**: Find the Screenshot Settings section
+3. **Select Monitor**: Choose which monitor to capture screenshots from
+   - "All Monitors (Default)" - Captures from all monitors
+   - Individual monitor selection - Captures only from the selected monitor
+4. **Save**: Click Save Settings to apply changes
+
+This is particularly useful if you want to capture screenshots from a specific monitor in a multi-monitor setup.
 
 #### Provider-Specific Setup:
 
