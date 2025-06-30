@@ -1,10 +1,11 @@
 // ipcHandlers.ts
 
-import { ipcMain, app } from "electron"
+import { ipcMain, app, screen } from "electron"
 import { AppState } from "./main"
 import { ModelProviderFactory } from "./ModelProviderFactory"
 import { ProcessingHelper } from "./ProcessingHelper"
 import screenshot from "screenshot-desktop"
+import { ElectronScreenshotHelper } from "./ElectronScreenshotHelper"
 
 export function initializeIpcHandlers(appState: AppState): void {
   ipcMain.handle(
@@ -172,12 +173,19 @@ export function initializeIpcHandlers(appState: AppState): void {
 
   ipcMain.handle("get-available-monitors", async () => {
     try {
-      const displays = await screenshot.listDisplays()
-      return displays.map((display, index) => ({
-        id: display.id,
-        name: display.name || `Monitor ${index + 1}`,
-        index: index
-      }))
+      // Try Electron's screen API first
+      const electronDisplays = await ElectronScreenshotHelper.listDisplays()
+      console.log('Electron displays:', electronDisplays)
+      
+      // Also try screenshot-desktop for comparison
+      try {
+        const screenshotDisplays = await screenshot.listDisplays()
+        console.log('Screenshot-desktop displays:', screenshotDisplays)
+      } catch (e) {
+        console.log('screenshot.listDisplays() failed:', e)
+      }
+      
+      return electronDisplays
     } catch (error: any) {
       console.error("Error getting available monitors:", error)
       throw error

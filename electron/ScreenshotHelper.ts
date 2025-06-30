@@ -6,6 +6,7 @@ import { app } from "electron"
 import { v4 as uuidv4 } from "uuid"
 import screenshot from "screenshot-desktop"
 import { ConfigManager } from "./ConfigManager"
+import { ElectronScreenshotHelper } from "./ElectronScreenshotHelper"
 
 export class ScreenshotHelper {
   private screenshotQueue: string[] = []
@@ -93,6 +94,16 @@ export class ScreenshotHelper {
     // Get the selected monitor from configuration
     const screenshotConfig = this.configManager.getScreenshotConfig()
     const selectedMonitor = screenshotConfig.selectedMonitor
+    console.log('Screenshot config:', screenshotConfig)
+    console.log('Selected monitor:', selectedMonitor)
+    
+    // List available displays for debugging
+    try {
+      const displays = await screenshot.listDisplays()
+      console.log('Available displays:', displays)
+    } catch (error) {
+      console.error('Error listing displays:', error)
+    }
 
     if (this.view === "queue") {
       screenshotPath = path.join(this.screenshotDir, `${uuidv4()}.png`)
@@ -107,12 +118,41 @@ export class ScreenshotHelper {
         screenshotOptions.screen = selectedMonitor
       }
       
-      // Linux-specific options
+      // Linux-specific options - use imagemagick for multi-monitor support
       if (process.platform === "linux") {
         screenshotOptions.format = "png"
+        screenshotOptions.linuxLibrary = "imagemagick"
       }
       
-      await screenshot(screenshotOptions)
+      try {
+        await screenshot(screenshotOptions)
+      } catch (error) {
+        console.error('Screenshot error with options:', screenshotOptions, error)
+        
+        // Fallback to Electron's native screenshot on Linux
+        if (process.platform === "linux") {
+          console.log('Falling back to Electron native screenshot...')
+          try {
+            if (selectedMonitor !== undefined && selectedMonitor !== null) {
+              await ElectronScreenshotHelper.captureDisplay(selectedMonitor, screenshotPath)
+            } else {
+              await ElectronScreenshotHelper.captureAllDisplays(screenshotPath)
+            }
+          } catch (electronError) {
+            console.error('Electron screenshot also failed:', electronError)
+            // Final fallback: try without screen selection
+            if (selectedMonitor !== undefined && selectedMonitor !== null) {
+              console.log('Final fallback: trying without monitor selection...')
+              delete screenshotOptions.screen
+              await screenshot(screenshotOptions)
+            } else {
+              throw error
+            }
+          }
+        } else {
+          throw error
+        }
+      }
 
       this.screenshotQueue.push(screenshotPath)
       if (this.screenshotQueue.length > this.MAX_SCREENSHOTS) {
@@ -138,12 +178,41 @@ export class ScreenshotHelper {
         screenshotOptions.screen = selectedMonitor
       }
       
-      // Linux-specific options
+      // Linux-specific options - use imagemagick for multi-monitor support
       if (process.platform === "linux") {
         screenshotOptions.format = "png"
+        screenshotOptions.linuxLibrary = "imagemagick"
       }
       
-      await screenshot(screenshotOptions)
+      try {
+        await screenshot(screenshotOptions)
+      } catch (error) {
+        console.error('Screenshot error with options:', screenshotOptions, error)
+        
+        // Fallback to Electron's native screenshot on Linux
+        if (process.platform === "linux") {
+          console.log('Falling back to Electron native screenshot...')
+          try {
+            if (selectedMonitor !== undefined && selectedMonitor !== null) {
+              await ElectronScreenshotHelper.captureDisplay(selectedMonitor, screenshotPath)
+            } else {
+              await ElectronScreenshotHelper.captureAllDisplays(screenshotPath)
+            }
+          } catch (electronError) {
+            console.error('Electron screenshot also failed:', electronError)
+            // Final fallback: try without screen selection
+            if (selectedMonitor !== undefined && selectedMonitor !== null) {
+              console.log('Final fallback: trying without monitor selection...')
+              delete screenshotOptions.screen
+              await screenshot(screenshotOptions)
+            } else {
+              throw error
+            }
+          }
+        } else {
+          throw error
+        }
+      }
 
       this.extraScreenshotQueue.push(screenshotPath)
       if (this.extraScreenshotQueue.length > this.MAX_SCREENSHOTS) {

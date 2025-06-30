@@ -14,7 +14,8 @@ A desktop application to help you cheat on everything.
 
 #### Linux Fedora Additional Requirements
 For optimal performance on Linux Fedora, ensure you have:
-- `gnome-screenshot` or `scrot` for screenshot functionality
+- `imagemagick` for multi-monitor screenshot support: `sudo dnf install imagemagick`
+- `gnome-screenshot` or `scrot` as fallback screenshot tools
 - X11 or Wayland display server properly configured
 - Required development tools: `sudo dnf install gcc-c++ make python3-devel`
 
@@ -129,6 +130,8 @@ ollama serve
    **Linux Fedora specific troubleshooting**:
    - If screenshots aren't working, install required tools:
      ```bash
+     # For multi-monitor support (recommended)
+     sudo dnf install imagemagick
      # For GNOME desktop
      sudo dnf install gnome-screenshot
      # Alternative for other desktop environments
