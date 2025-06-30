@@ -33,7 +33,7 @@ For optimal performance on Linux Fedora, ensure you have:
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
+git clone https://github.com/ibttf/free-cluely-linux.git
 cd free-cluely-linux
 ```
 
@@ -61,7 +61,7 @@ npm install
 #### Method 1: Development Mode (Recommended for first run)
 1. Open a terminal and run:
 ```bash
-npm run dev -- --port 5180
+npm run dev
 ```
 
 2. Open another terminal in the same folder and run:
@@ -73,7 +73,13 @@ NODE_ENV=development npm run electron:dev
 ```bash
 npm run build
 ```
-The built app will be in the `release` folder.
+The built app will be in the `dist` folder.
+
+To build the full Electron app package:
+```bash
+npm run app:build
+```
+The packaged app will be in the `release` folder.
 
 ### ⚙️ Configuration
 
@@ -135,15 +141,15 @@ ollama serve
 
 1. **Closing the App**: 
    - Press `Cmd + Q` (Mac) or `Ctrl + Q` (Windows/Linux) to quit
-   - Or use Activity Monitor/Task Manager to close `Interview Coder`
+   - Or use Activity Monitor/Task Manager to close `Free Cluely`
    - The X button currently doesn't work (known issue)
 
 2. **If the app doesn't start**:
-   - Make sure no other app is using port 5180
+   - Make sure no other app is using port 5173 (Vite's default port)
    - Try killing existing processes:
      ```bash
-     # Find processes using port 5180
-     lsof -i :5180
+     # Find processes using port 5173
+     lsof -i :5173
      # Kill them (replace [PID] with the process ID)
      kill [PID]
      ```
@@ -171,7 +177,7 @@ ollama serve
      # Install ImageMagick (essential for multi-monitor support)
      sudo dnf install imagemagick
      # Verify installation and display detection
-     identify -list display
+     xrandr --listmonitors
      ```
    - If monitor selection still isn't working:
      - **Restart the application completely** after installing ImageMagick
@@ -188,7 +194,7 @@ ollama serve
 3. **Keyboard Shortcuts**:
    - `Cmd/Ctrl + B`: Toggle window visibility
    - `Cmd/Ctrl + H`: Take screenshot
-   - 'Cmd/Enter': Get solution
+   - `Cmd/Enter`: Get solution
    - `Cmd/Ctrl + Arrow Keys`: Move window
 
 ### Troubleshooting
