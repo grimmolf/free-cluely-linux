@@ -3,8 +3,13 @@ import fs from "fs"
 import path from "path"
 import { ModelProviderConfig } from "./ModelProvider"
 
+export interface ScreenshotConfig {
+  selectedMonitor?: number
+}
+
 export interface AppConfig {
   modelProvider: ModelProviderConfig
+  screenshot?: ScreenshotConfig
 }
 
 export class ConfigManager {
@@ -22,6 +27,9 @@ export class ConfigManager {
         provider: 'gemini',
         modelName: 'gemini-2.0-flash',
         apiKey: process.env.GEMINI_API_KEY || ''
+      },
+      screenshot: {
+        selectedMonitor: undefined
       }
     }
   }
@@ -40,6 +48,10 @@ export class ConfigManager {
           modelProvider: {
             ...defaultConfig.modelProvider,
             ...savedConfig.modelProvider
+          },
+          screenshot: {
+            ...defaultConfig.screenshot,
+            ...(savedConfig.screenshot || {})
           }
         }
       }
@@ -102,5 +114,17 @@ export class ConfigManager {
       this.config.modelProvider.apiKey = apiKey
       this.saveConfig()
     }
+  }
+
+  public getScreenshotConfig(): ScreenshotConfig {
+    return { ...this.config.screenshot }
+  }
+
+  public setScreenshotConfig(config: Partial<ScreenshotConfig>): void {
+    this.config.screenshot = {
+      ...this.config.screenshot,
+      ...config
+    }
+    this.saveConfig()
   }
 }

@@ -38,6 +38,11 @@ interface ElectronAPI {
   setModelProviderConfig: (config: any) => Promise<{ success: boolean }>
   getAvailableProviders: () => Promise<Array<{ value: string, label: string, requiresApiKey: boolean }>>
   getModelOptions: (provider: string) => Promise<string[]>
+
+  // Screenshot Configuration
+  getScreenshotConfig: () => Promise<any>
+  setScreenshotConfig: (config: any) => Promise<{ success: boolean }>
+  getAvailableMonitors: () => Promise<Array<{ id: number, name: string, index: number }>>
 }
 
 export const PROCESSING_EVENTS = {
@@ -177,5 +182,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getModelProviderConfig: () => ipcRenderer.invoke("get-model-provider-config"),
   setModelProviderConfig: (config: any) => ipcRenderer.invoke("set-model-provider-config", config),
   getAvailableProviders: () => ipcRenderer.invoke("get-available-providers"),
-  getModelOptions: (provider: string) => ipcRenderer.invoke("get-model-options", provider)
+  getModelOptions: (provider: string) => ipcRenderer.invoke("get-model-options", provider),
+
+  // Screenshot Configuration
+  getScreenshotConfig: () => ipcRenderer.invoke("get-screenshot-config"),
+  setScreenshotConfig: (config: any) => ipcRenderer.invoke("set-screenshot-config", config),
+  getAvailableMonitors: () => ipcRenderer.invoke("get-available-monitors")
 } as ElectronAPI)

@@ -5,6 +5,7 @@ import fs from "node:fs"
 import { app } from "electron"
 import { v4 as uuidv4 } from "uuid"
 import screenshot from "screenshot-desktop"
+import { ConfigManager } from "./ConfigManager"
 
 export class ScreenshotHelper {
   private screenshotQueue: string[] = []
@@ -15,9 +16,11 @@ export class ScreenshotHelper {
   private readonly extraScreenshotDir: string
 
   private view: "queue" | "solutions" = "queue"
+  private configManager: ConfigManager
 
-  constructor(view: "queue" | "solutions" = "queue") {
+  constructor(view: "queue" | "solutions" = "queue", configManager: ConfigManager) {
     this.view = view
+    this.configManager = configManager
 
     // Initialize directories
     this.screenshotDir = path.join(app.getPath("userData"), "screenshots")
@@ -86,14 +89,28 @@ export class ScreenshotHelper {
     }
     
     let screenshotPath = ""
+    
+    // Get the selected monitor from configuration
+    const screenshotConfig = this.configManager.getScreenshotConfig()
+    const selectedMonitor = screenshotConfig.selectedMonitor
 
     if (this.view === "queue") {
       screenshotPath = path.join(this.screenshotDir, `${uuidv4()}.png`)
       
-      // Linux-specific screenshot options
-      const screenshotOptions = process.platform === "linux" 
-        ? { filename: screenshotPath, format: "png" as any }
-        : { filename: screenshotPath }
+      // Build screenshot options with monitor selection
+      const screenshotOptions: any = {
+        filename: screenshotPath
+      }
+      
+      // Add monitor selection if configured
+      if (selectedMonitor !== undefined && selectedMonitor !== null) {
+        screenshotOptions.screen = selectedMonitor
+      }
+      
+      // Linux-specific options
+      if (process.platform === "linux") {
+        screenshotOptions.format = "png"
+      }
       
       await screenshot(screenshotOptions)
 
@@ -111,10 +128,20 @@ export class ScreenshotHelper {
     } else {
       screenshotPath = path.join(this.extraScreenshotDir, `${uuidv4()}.png`)
       
-      // Linux-specific screenshot options
-      const screenshotOptions = process.platform === "linux" 
-        ? { filename: screenshotPath, format: "png" as any }
-        : { filename: screenshotPath }
+      // Build screenshot options with monitor selection
+      const screenshotOptions: any = {
+        filename: screenshotPath
+      }
+      
+      // Add monitor selection if configured
+      if (selectedMonitor !== undefined && selectedMonitor !== null) {
+        screenshotOptions.screen = selectedMonitor
+      }
+      
+      // Linux-specific options
+      if (process.platform === "linux") {
+        screenshotOptions.format = "png"
+      }
       
       await screenshot(screenshotOptions)
 

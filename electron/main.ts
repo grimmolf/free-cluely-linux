@@ -54,7 +54,7 @@ export class AppState {
     this.windowHelper = new WindowHelper(this)
 
     // Initialize ScreenshotHelper
-    this.screenshotHelper = new ScreenshotHelper(this.view)
+    this.screenshotHelper = new ScreenshotHelper(this.view, this.configManager)
 
     // Initialize ProcessingHelper
     this.processingHelper = new ProcessingHelper(this)

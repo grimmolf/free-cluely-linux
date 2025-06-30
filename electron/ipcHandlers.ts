@@ -4,6 +4,7 @@ import { ipcMain, app } from "electron"
 import { AppState } from "./main"
 import { ModelProviderFactory } from "./ModelProviderFactory"
 import { ProcessingHelper } from "./ProcessingHelper"
+import screenshot from "screenshot-desktop"
 
 export function initializeIpcHandlers(appState: AppState): void {
   ipcMain.handle(
@@ -145,6 +146,40 @@ export function initializeIpcHandlers(appState: AppState): void {
       return ModelProviderFactory.getModelOptions(provider)
     } catch (error: any) {
       console.error("Error getting model options:", error)
+      throw error
+    }
+  })
+
+  // Screenshot Configuration IPC Handlers
+  ipcMain.handle("get-screenshot-config", async () => {
+    try {
+      return appState.configManager.getScreenshotConfig()
+    } catch (error: any) {
+      console.error("Error getting screenshot config:", error)
+      throw error
+    }
+  })
+
+  ipcMain.handle("set-screenshot-config", async (event, config) => {
+    try {
+      appState.configManager.setScreenshotConfig(config)
+      return { success: true }
+    } catch (error: any) {
+      console.error("Error setting screenshot config:", error)
+      throw error
+    }
+  })
+
+  ipcMain.handle("get-available-monitors", async () => {
+    try {
+      const displays = await screenshot.listDisplays()
+      return displays.map((display, index) => ({
+        id: display.id,
+        name: display.name || `Monitor ${index + 1}`,
+        index: index
+      }))
+    } catch (error: any) {
+      console.error("Error getting available monitors:", error)
       throw error
     }
   })

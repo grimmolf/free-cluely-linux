@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import Solutions from "./_pages/Solutions"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import ModelProviderSettings from "./components/Settings/ModelProviderSettings"
+import ScreenshotSettings from "./components/Settings/ScreenshotSettings"
 
 declare global {
   interface Window {
@@ -53,6 +54,11 @@ declare global {
       setModelProviderConfig: (config: any) => Promise<{ success: boolean }>
       getAvailableProviders: () => Promise<Array<{ value: string, label: string, requiresApiKey: boolean }>>
       getModelOptions: (provider: string) => Promise<string[]>
+
+      // Screenshot Configuration
+      getScreenshotConfig: () => Promise<any>
+      setScreenshotConfig: (config: any) => Promise<{ success: boolean }>
+      getAvailableMonitors: () => Promise<Array<{ id: number, name: string, index: number }>>
     }
   }
 }
@@ -178,7 +184,10 @@ const App: React.FC = () => {
                   Back
                 </button>
               </div>
-              <ModelProviderSettings />
+              <div className="space-y-4">
+                <ModelProviderSettings />
+                <ScreenshotSettings />
+              </div>
             </div>
           ) : (
             <></>
