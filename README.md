@@ -22,10 +22,12 @@ A desktop application to help you cheat on everything.
 
 #### Linux Fedora Additional Requirements
 For optimal performance on Linux Fedora, ensure you have:
-- `imagemagick` for multi-monitor screenshot support: `sudo dnf install imagemagick`
-- `gnome-screenshot` or `scrot` as fallback screenshot tools
+- **`imagemagick` (REQUIRED for multi-monitor support)**: `sudo dnf install imagemagick`
+- `gnome-screenshot` (optional fallback for single monitor)
 - X11 or Wayland display server properly configured
 - Required development tools: `sudo dnf install gcc-c++ make python3-devel`
+
+**Note**: ImageMagick is essential for the multi-monitor screenshot feature. Without it, monitor selection will not work properly.
 
 ### Installation Steps
 
@@ -149,12 +151,12 @@ ollama serve
    **Linux Fedora specific troubleshooting**:
    - If screenshots aren't working, install required tools:
      ```bash
-     # For multi-monitor support (recommended)
+     # REQUIRED: For multi-monitor support
      sudo dnf install imagemagick
-     # For GNOME desktop
+     
+     # Optional fallbacks (only if ImageMagick fails):
+     # For GNOME desktop environments
      sudo dnf install gnome-screenshot
-     # Alternative for other desktop environments
-     sudo dnf install scrot
      ```
    - If the window doesn't show properly, try:
      ```bash
@@ -164,20 +166,24 @@ ollama serve
      ```
 
    **Multi-Monitor Issues**:
-   - If monitor selection isn't working:
+   - **FIRST STEP**: Ensure ImageMagick is properly installed:
      ```bash
-     # Ensure ImageMagick is installed
+     # Install ImageMagick (essential for multi-monitor support)
      sudo dnf install imagemagick
-     # Check if ImageMagick can detect displays
+     # Verify installation and display detection
      identify -list display
      ```
-   - If screenshots only capture the primary monitor:
-     - Check the app logs for "Screenshot error" messages
+   - If monitor selection still isn't working:
+     - **Restart the application completely** after installing ImageMagick
+     - Check the app logs for "Screenshot error" or "Falling back to Electron" messages
      - Try selecting a specific monitor in Settings instead of "All Monitors"
-     - Restart the app after changing monitor settings
+   - If screenshots only capture the primary monitor:
+     - Verify ImageMagick installation: `which convert` (should return a path)
+     - Check Settings → Screenshot Settings → Select your desired monitor
+     - The app will automatically fall back to Electron's native capture if ImageMagick fails
    - If no monitors appear in the settings dropdown:
-     - Check console logs for display detection errors
-     - Try running the app with: `NODE_ENV=development npm run electron:dev`
+     - Run in development mode to see detailed logs: `NODE_ENV=development npm run electron:dev`
+     - Check console for "Electron displays:" and "Screenshot-desktop displays:" logs
 
 3. **Keyboard Shortcuts**:
    - `Cmd/Ctrl + B`: Toggle window visibility
