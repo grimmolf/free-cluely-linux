@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid"
 import screenshot from "screenshot-desktop"
 import { ConfigManager } from "./ConfigManager"
 import { ElectronScreenshotHelper } from "./ElectronScreenshotHelper"
+import { X11ScreenshotHelper } from "./X11ScreenshotHelper"
 
 export class ScreenshotHelper {
   private screenshotQueue: string[] = []
@@ -129,24 +130,37 @@ export class ScreenshotHelper {
       } catch (error) {
         console.error('Screenshot error with options:', screenshotOptions, error)
         
-        // Fallback to Electron's native screenshot on Linux
+        // On Linux, try X11 screenshot first, then Electron fallback
         if (process.platform === "linux") {
-          console.log('Falling back to Electron native screenshot...')
+          console.log('Trying X11 screenshot with ImageMagick...')
           try {
             if (selectedMonitor !== undefined && selectedMonitor !== null) {
-              await ElectronScreenshotHelper.captureDisplay(selectedMonitor, screenshotPath)
+              // selectedMonitor should be the display name (e.g., "DisplayPort-2")
+              await X11ScreenshotHelper.captureDisplay(selectedMonitor.toString(), screenshotPath)
             } else {
-              await ElectronScreenshotHelper.captureAllDisplays(screenshotPath)
+              await X11ScreenshotHelper.captureAllDisplays(screenshotPath)
             }
-          } catch (electronError) {
-            console.error('Electron screenshot also failed:', electronError)
-            // Final fallback: try without screen selection
-            if (selectedMonitor !== undefined && selectedMonitor !== null) {
-              console.log('Final fallback: trying without monitor selection...')
-              delete screenshotOptions.screen
-              await screenshot(screenshotOptions)
-            } else {
-              throw error
+          } catch (x11Error) {
+            console.error('X11 screenshot failed:', x11Error)
+            console.log('Falling back to Electron native screenshot...')
+            try {
+              if (selectedMonitor !== undefined && selectedMonitor !== null) {
+                // Convert to number for Electron API if it's a string
+                const numericId = typeof selectedMonitor === 'string' ? 0 : selectedMonitor
+                await ElectronScreenshotHelper.captureDisplay(numericId, screenshotPath)
+              } else {
+                await ElectronScreenshotHelper.captureAllDisplays(screenshotPath)
+              }
+            } catch (electronError) {
+              console.error('Electron screenshot also failed:', electronError)
+              // Final fallback: try without screen selection
+              if (selectedMonitor !== undefined && selectedMonitor !== null) {
+                console.log('Final fallback: trying without monitor selection...')
+                delete screenshotOptions.screen
+                await screenshot(screenshotOptions)
+              } else {
+                throw error
+              }
             }
           }
         } else {
@@ -189,24 +203,37 @@ export class ScreenshotHelper {
       } catch (error) {
         console.error('Screenshot error with options:', screenshotOptions, error)
         
-        // Fallback to Electron's native screenshot on Linux
+        // On Linux, try X11 screenshot first, then Electron fallback
         if (process.platform === "linux") {
-          console.log('Falling back to Electron native screenshot...')
+          console.log('Trying X11 screenshot with ImageMagick...')
           try {
             if (selectedMonitor !== undefined && selectedMonitor !== null) {
-              await ElectronScreenshotHelper.captureDisplay(selectedMonitor, screenshotPath)
+              // selectedMonitor should be the display name (e.g., "DisplayPort-2")
+              await X11ScreenshotHelper.captureDisplay(selectedMonitor.toString(), screenshotPath)
             } else {
-              await ElectronScreenshotHelper.captureAllDisplays(screenshotPath)
+              await X11ScreenshotHelper.captureAllDisplays(screenshotPath)
             }
-          } catch (electronError) {
-            console.error('Electron screenshot also failed:', electronError)
-            // Final fallback: try without screen selection
-            if (selectedMonitor !== undefined && selectedMonitor !== null) {
-              console.log('Final fallback: trying without monitor selection...')
-              delete screenshotOptions.screen
-              await screenshot(screenshotOptions)
-            } else {
-              throw error
+          } catch (x11Error) {
+            console.error('X11 screenshot failed:', x11Error)
+            console.log('Falling back to Electron native screenshot...')
+            try {
+              if (selectedMonitor !== undefined && selectedMonitor !== null) {
+                // Convert to number for Electron API if it's a string
+                const numericId = typeof selectedMonitor === 'string' ? 0 : selectedMonitor
+                await ElectronScreenshotHelper.captureDisplay(numericId, screenshotPath)
+              } else {
+                await ElectronScreenshotHelper.captureAllDisplays(screenshotPath)
+              }
+            } catch (electronError) {
+              console.error('Electron screenshot also failed:', electronError)
+              // Final fallback: try without screen selection
+              if (selectedMonitor !== undefined && selectedMonitor !== null) {
+                console.log('Final fallback: trying without monitor selection...')
+                delete screenshotOptions.screen
+                await screenshot(screenshotOptions)
+              } else {
+                throw error
+              }
             }
           }
         } else {

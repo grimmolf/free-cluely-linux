@@ -42,7 +42,7 @@ interface ElectronAPI {
   // Screenshot Configuration
   getScreenshotConfig: () => Promise<any>
   setScreenshotConfig: (config: any) => Promise<{ success: boolean }>
-  getAvailableMonitors: () => Promise<Array<{ id: number, name: string, index: number }>>
+  getAvailableMonitors: () => Promise<Array<{ id: number | string, name: string, index: number }>>
 }
 
 export const PROCESSING_EVENTS = {

@@ -4,7 +4,7 @@ import path from "path"
 import { ModelProviderConfig } from "./ModelProvider"
 
 export interface ScreenshotConfig {
-  selectedMonitor?: number
+  selectedMonitor?: number | string // Support both legacy numeric IDs and new display names
 }
 
 export interface AppConfig {

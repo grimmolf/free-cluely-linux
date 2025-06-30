@@ -6,6 +6,7 @@ import { ModelProviderFactory } from "./ModelProviderFactory"
 import { ProcessingHelper } from "./ProcessingHelper"
 import screenshot from "screenshot-desktop"
 import { ElectronScreenshotHelper } from "./ElectronScreenshotHelper"
+import { X11ScreenshotHelper } from "./X11ScreenshotHelper"
 
 export function initializeIpcHandlers(appState: AppState): void {
   ipcMain.handle(
@@ -173,7 +174,24 @@ export function initializeIpcHandlers(appState: AppState): void {
 
   ipcMain.handle("get-available-monitors", async () => {
     try {
-      // Try Electron's screen API first
+      // On Linux, use X11 for accurate display information
+      if (process.platform === "linux") {
+        try {
+          const x11Displays = await X11ScreenshotHelper.getX11Displays()
+          console.log('X11 displays:', x11Displays)
+          
+          return x11Displays.map((display, index) => ({
+            id: display.name, // Use display name as ID (e.g., "DisplayPort-1", "DisplayPort-2")
+            name: `${display.name} (${display.resolution})${display.primary ? ' - Primary' : ''}`,
+            index: index
+          }))
+        } catch (x11Error) {
+          console.error('X11 display detection failed:', x11Error)
+          // Fall back to Electron's screen API
+        }
+      }
+      
+      // Fallback: Try Electron's screen API
       const electronDisplays = await ElectronScreenshotHelper.listDisplays()
       console.log('Electron displays:', electronDisplays)
       

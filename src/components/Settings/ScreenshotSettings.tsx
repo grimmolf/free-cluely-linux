@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { Card } from '../ui/card'
 
 interface ScreenshotConfig {
-  selectedMonitor?: number
+  selectedMonitor?: number | string
 }
 
 interface MonitorOption {
-  id: number
+  id: number | string
   name: string
   index: number
 }
@@ -39,7 +39,7 @@ const ScreenshotSettings: React.FC = () => {
   }, [])
 
   const handleMonitorChange = (monitorId: string) => {
-    const id = monitorId === '' ? undefined : parseInt(monitorId, 10)
+    const id = monitorId === '' ? undefined : monitorId
     setConfig(prev => ({
       ...prev,
       selectedMonitor: id
