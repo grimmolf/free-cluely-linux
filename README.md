@@ -1,6 +1,14 @@
 # Free Cluely
 
-A desktop application to help you cheat on everything. 
+A desktop application to help you cheat on everything.
+
+## ✨ Key Features
+
+- **Multi-Monitor Support**: Select which monitor to capture screenshots from in dual/triple monitor setups
+- **Multi-Provider AI**: Choose from Gemini, Red Hat Model as a Service, or Ollama (local)
+- **Cross-Platform**: Works on Windows, macOS, and Linux (with enhanced Linux support)
+- **Keyboard Shortcuts**: Quick screenshot capture and window management
+- **Persistent Settings**: Monitor preferences and AI configuration saved between sessions
 
 ## 🚀 Quick Start Guide
 
@@ -79,16 +87,27 @@ Once the app is running, you can configure various settings:
 
 #### Screenshot Settings (Multi-Monitor Support)
 
+**NEW**: Enhanced multi-monitor support for dual/triple monitor setups!
+
 For users with multiple monitors:
 
 1. **Access Settings**: Click the ⚙️ Settings button
 2. **Screenshot Settings**: Find the Screenshot Settings section
-3. **Select Monitor**: Choose which monitor to capture screenshots from
-   - "All Monitors (Default)" - Captures from all monitors
-   - Individual monitor selection - Captures only from the selected monitor
+3. **Select Monitor**: Choose which monitor to capture screenshots from:
+   - **"All Monitors (Default)"** - Captures from all monitors combined
+   - **Individual monitor selection** - Captures only from the selected monitor (e.g., "Display 1 (1920x1080)")
 4. **Save**: Click Save Settings to apply changes
 
-This is particularly useful if you want to capture screenshots from a specific monitor in a multi-monitor setup.
+**Key Benefits:**
+- Capture screenshots from your active work monitor only
+- Avoid capturing sensitive information from secondary monitors
+- Better performance with focused screen capture
+- Works with dual-monitor, triple-monitor, and extended display setups
+
+**Technical Implementation:**
+- Uses ImageMagick on Linux for reliable multi-monitor support
+- Falls back to Electron's native screenshot API if needed
+- Automatic display detection and enumeration
 
 #### Provider-Specific Setup:
 
@@ -143,6 +162,22 @@ ollama serve
      xhost +local:
      # Or ensure proper Wayland permissions
      ```
+
+   **Multi-Monitor Issues**:
+   - If monitor selection isn't working:
+     ```bash
+     # Ensure ImageMagick is installed
+     sudo dnf install imagemagick
+     # Check if ImageMagick can detect displays
+     identify -list display
+     ```
+   - If screenshots only capture the primary monitor:
+     - Check the app logs for "Screenshot error" messages
+     - Try selecting a specific monitor in Settings instead of "All Monitors"
+     - Restart the app after changing monitor settings
+   - If no monitors appear in the settings dropdown:
+     - Check console logs for display detection errors
+     - Try running the app with: `NODE_ENV=development npm run electron:dev`
 
 3. **Keyboard Shortcuts**:
    - `Cmd/Ctrl + B`: Toggle window visibility
